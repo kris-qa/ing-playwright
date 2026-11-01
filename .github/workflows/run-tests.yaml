@@ -59,13 +59,21 @@ jobs:
           java-version: '21'
           cache: maven
 
+      - name: Install Playwright system dependencies
+        run: |
+          sudo mvn -B \
+            -Dexec.classpathScope=test \
+            exec:java \
+            -Dexec.mainClass=com.microsoft.playwright.CLI \
+            -Dexec.args="install-deps"
+
       - name: Install Playwright browser
         run: |
           mvn -B \
             -Dexec.classpathScope=test \
             exec:java \
             -Dexec.mainClass=com.microsoft.playwright.CLI \
-            -Dexec.args="install --with-deps $BROWSER"
+            -Dexec.args="install $BROWSER"
 
       - name: Run Cucumber tests
         shell: bash
