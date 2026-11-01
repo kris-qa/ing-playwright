@@ -25,7 +25,7 @@ public class BrowserConfig {
     public static Browser createBrowser(Playwright playwright) {
         Properties props = loadProperties();
         String browserType = props.getProperty("browser.type", "chromium").toLowerCase();
-        boolean headless = Boolean.parseBoolean(props.getProperty("browser.headless", "false"));
+        boolean headless = Boolean.parseBoolean(EnvConfig.get("browser.headless"));
         double slowMo = Double.parseDouble(props.getProperty("browser.slow.mo", "0"));
 
         BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
@@ -45,8 +45,8 @@ public class BrowserConfig {
 
     public static BrowserContext createContext(Browser browser) {
         Properties props = loadProperties();
-        int width = Integer.parseInt(props.getProperty("browser.width", "1280"));
-        int height = Integer.parseInt(props.getProperty("browser.height", "720"));
+        int width = Integer.parseInt(props.getProperty("browser.width", "1920"));
+        int height = Integer.parseInt(props.getProperty("browser.height", "1080"));
 
         return browser.newContext(new Browser.NewContextOptions().setViewportSize(width, height));
     }

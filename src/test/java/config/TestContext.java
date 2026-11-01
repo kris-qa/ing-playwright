@@ -14,6 +14,36 @@ public class TestContext {
         browser = BrowserConfig.createBrowser(playwright);
         context = BrowserConfig.createContext(browser);
         page = context.newPage();
+
+        // Błędy JavaScript
+        page.onPageError(error ->
+            System.out.println("[PAGE ERROR] " + error)
+        );
+
+        // Błędy konsoli
+        page.onConsoleMessage(message ->
+            System.out.println(
+                "[CONSOLE " + message.type() + "] " + message.text()
+            )
+        );
+
+        // Nieudane żądania HTTP
+        page.onRequestFailed(request ->
+            System.out.println(
+                "[REQUEST FAILED] " + request.url()
+                    + " | " + request.failure()
+            )
+        );
+
+        // Odpowiedzi HTTP
+        page.onResponse(response -> {
+            if (response.status() >= 400) {
+                System.out.println(
+                    "[HTTP ERROR] " + response.status()
+                        + " | " + response.url()
+                );
+            }
+        });
     }
 
     public Page getPage() {
