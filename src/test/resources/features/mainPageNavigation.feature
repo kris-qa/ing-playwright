@@ -1,8 +1,9 @@
 # language: pl
 
+@Navigation
 Funkcja: Nawigacja na stronie głównej
 
-  @GUI @Navigation
+  @GUI
   Scenariusz: Menu główne na stronie głównej
     Zakładając, że Użytkownik uruchomi stronę główną
 

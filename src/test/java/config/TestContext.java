@@ -14,6 +14,8 @@ public class TestContext {
         browser = BrowserConfig.createBrowser(playwright);
         context = BrowserConfig.createContext(browser);
         page = context.newPage();
+        System.out.println("CHOSEN ENV: " +System.getProperty("env"));
+        System.out.println("CHOSEN BROWSER: " +System.getProperty("browser"));
 
         // Błędy JavaScript
         page.onPageError(error ->
