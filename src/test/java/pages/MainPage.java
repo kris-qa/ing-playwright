@@ -1,7 +1,10 @@
 package pages;
 
 import actions.UiElement;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+
+import java.nio.file.Paths;
 
 public class MainPage extends BasePage {
 
@@ -12,6 +15,20 @@ public class MainPage extends BasePage {
 
     public void navigateTo(String url) {
         page.navigate(url);
+        System.out.println("URL: " + page.url());
+        System.out.println("TITLE: " + page.title());
+
+        System.out.println("BODY:");
+        System.out.println(
+            page.locator("body").innerText(
+                new Locator.InnerTextOptions().setTimeout(5000)
+            )
+        );
+        page.screenshot(
+            new Page.ScreenshotOptions()
+                .setPath(Paths.get("target/screenshots/ing-response.png"))
+                .setFullPage(true)
+        );
     }
 
     public void clickMenuTab(String tabText) {
