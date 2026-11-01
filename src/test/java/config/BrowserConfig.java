@@ -45,8 +45,8 @@ public class BrowserConfig {
 
     public static BrowserContext createContext(Browser browser) {
         Properties props = loadProperties();
-        int width = Integer.parseInt(props.getProperty("browser.width", "1280"));
-        int height = Integer.parseInt(props.getProperty("browser.height", "720"));
+        int width = Integer.parseInt(props.getProperty("browser.width", "1920"));
+        int height = Integer.parseInt(props.getProperty("browser.height", "1080"));
 
         return browser.newContext(new Browser.NewContextOptions().setViewportSize(width, height));
     }
