@@ -25,7 +25,7 @@ public class BrowserConfig {
     public static Browser createBrowser(Playwright playwright) {
         Properties props = loadProperties();
         String browserType = props.getProperty("browser.type", "chromium").toLowerCase();
-        boolean headless = Boolean.parseBoolean(props.getProperty("browser.headless", "false"));
+        boolean headless = Boolean.parseBoolean(EnvConfig.get("browser.headless"));
         double slowMo = Double.parseDouble(props.getProperty("browser.slow.mo", "0"));
 
         BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
