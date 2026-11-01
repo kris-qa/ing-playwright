@@ -16,8 +16,8 @@
         <cucumber.version>7.20.1</cucumber.version>
         <junit.jupiter.version>5.11.3</junit.jupiter.version>
         <allure.version>3.0.0</allure.version>
-        <browser.env>chromium</browser.env>
-        <cucumber.filter.tags>not @ignore</cucumber.filter.tags>
+        <env>dev</env>
+        <browser>chromium</browser>
     </properties>
 
     <dependencyManagement>
@@ -38,7 +38,6 @@
             <artifactId>playwright</artifactId>
             <version>${playwright.version}</version>
         </dependency>
-
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
@@ -56,14 +55,12 @@
             <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite-engine</artifactId>
@@ -75,7 +72,6 @@
             <artifactId>allure-cucumber7-jvm</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -86,12 +82,7 @@
                 <version>3.5.2</version>
                 <configuration>
                     <systemPropertyVariables>
-                        <!-- Przekazuje do kodu flagę env, domyślnie ustawioną na 'chromium' -->
-                        <env>${browser.env}</env>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
-                        <cucumber.filter.tags>
-                            ${cucumber.filter.tags}
-                        </cucumber.filter.tags>
                     </systemPropertyVariables>
                     <includes>
                         <include>**/IngRunner.java</include>
@@ -114,6 +105,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
