@@ -1,0 +1,22 @@
+services:
+  playwright-tests:
+    image: mcr.microsoft.com/playwright/java:v1.49.0-jammy
+    working_dir: /app
+    init: true
+    ipc: host
+
+    volumes:
+      - .:/app
+      - maven-cache:/root/.m2
+
+    environment:
+      TEST_ENV: ${TEST_ENV:-dev}
+      BROWSER: ${BROWSER:-chromium}
+
+    command: >
+      bash -c "mvn -B clean test
+      -Denv=$${TEST_ENV}
+      -Dbrowser=$${BROWSER}"
+
+volumes:
+  maven-cache:
