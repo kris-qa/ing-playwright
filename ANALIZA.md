@@ -17,7 +17,7 @@ Dokument zawiera wyłącznie **otwarte** problemy i rekomendacje.
 
 ## 1. Podsumowanie
 
-Framework ma przemyślaną strukturę warstwową (Step def → Page Object → ElementFinder → UiElement → BaseActions) i DI przez PicoContainer. Step defy dostają strony z rejestru `Pages` i tylko wywołują metody stron, a weryfikacje są w Page Objectach. Akcje korzystają z auto-wait Playwrighta, a asercje ponawiają sprawdzenie. Selektory opierają się na rolach ARIA i nazwach dostępnych. Jedna przeglądarka jest współdzielona przez wszystkie scenariusze, a każdy scenariusz dostaje izolowany kontekst. Log testu pokazuje każdy scenariusz, krok, wyszukanie elementu, akcję i nawigację; działa to generycznie, bez kodu w step defach. Scenariusze wykonują się równolegle. Przy błędzie raport Allure zawiera trace. CI pilnuje zgodności wersji Playwrighta, pokazuje wyniki testów w PR i publikuje raporty Allure z historią na GitHub Pages.
+Framework ma przemyślaną strukturę warstwową (Step def → Page Object → ElementFinder → UiElement → BaseActions) i DI przez PicoContainer. Step defy dostają strony z rejestru `Pages` i tylko wywołują metody stron, a weryfikacje są w Page Objectach. Akcje korzystają z auto-wait Playwrighta, a asercje ponawiają sprawdzenie. Selektory opierają się na rolach ARIA i nazwach dostępnych. Jedna przeglądarka jest współdzielona przez wszystkie scenariusze, a każdy scenariusz dostaje izolowany kontekst. Log testu pokazuje każdy scenariusz, krok, wyszukanie elementu, akcję i nawigację; działa to generycznie, bez kodu w step defach. Scenariusze wykonują się równolegle. Przy błędzie raport Allure zawiera trace. CI pokazuje wyniki testów w PR i publikuje raporty Allure z historią na GitHub Pages.
 
 Do zrobienia zostały: drobna uwaga (sekcja 3) i **rozszerzenie pokrycia testami** (sekcja 5).
 
@@ -27,7 +27,7 @@ Do zrobienia zostały: drobna uwaga (sekcja 3) i **rozszerzenie pokrycia testami
 | Stabilność testów | 5/5 | Auto-wait, asercje z ponawianiem, lokatory po rolach ARIA |
 | Selektory | 5/5 | `getByRole` z dokładną nazwą, zawężone do kontenera; brak XPath |
 | Scenariusze BDD | 5/5 | Spójny słownik kroków, oba pliki jako szablony scenariuszy z sekcją `Założenia` |
-| Konfiguracja / CI | 5/5 | Jedno źródło wersji Playwrighta (sprawdzane w CI), równoległe scenariusze, wyniki w PR, Allure z historią na Pages, Maven Wrapper, `concurrency` |
+| Konfiguracja / CI | 5/5 | Równoległe scenariusze, wyniki w PR, Allure z historią na Pages, Maven Wrapper, `concurrency` |
 | Logowanie | 5/5 | Scenariusze, kroki, elementy, akcje z czasem i nawigacja – automatycznie dla nowych step defów |
 | Higiena kodu | 5/5 | Bez martwego kodu i pozostałości szablonu projektu |
 
@@ -96,8 +96,7 @@ Nowy krok wymaga tylko metody w step defie, która woła metodę strony z `Pages
 
 | Job | Kiedy | Co robi |
 |---|---|---|
-| `version-check` | zawsze | porównuje `PLAYWRIGHT_VERSION` z `.env` z `playwright.version` z `pom.xml` |
-| `e2e-tests` | zawsze, macierz chromium / firefox / webkit | instaluje przeglądarkę zgodną z `pom.xml` (cache), uruchamia testy, publikuje check „Wyniki testów - &lt;przeglądarka&gt;” w PR, wysyła artefakty (Allure, JUnit, trace) |
+| `e2e-tests` | PR do `develop` i push do `develop` (DEV), push do `master` (PREPROD); macierz chromium / firefox / webkit | instaluje przeglądarkę zgodną z `pom.xml` (cache), uruchamia testy, publikuje check „Wyniki testów - &lt;przeglądarka&gt;” w PR, wysyła artefakty (Allure, JUnit, trace) |
 | `allure-pages` | push do `master` | generuje raporty Allure z historią dla każdej przeglądarki i publikuje je na GitHub Pages |
 
 Dodatkowo: `concurrency` anuluje nieaktualne przebiegi, a `./mvnw` zapewnia tę samą wersję Mavena lokalnie i w CI.

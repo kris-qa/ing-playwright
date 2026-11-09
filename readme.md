@@ -120,12 +120,10 @@ Aby przekazać parametry:
 
 ### 8. GitHub Actions
 
-Workflow `.github/workflows/run-tests.yaml` uruchamia się przy PR i pushu do `develop` / `master`
-oraz ręcznie (`workflow_dispatch`).
+Workflow `.github/workflows/run-tests.yaml` uruchamia się przy PR do `develop` (DEV), pushu do `develop` (DEV),
+pushu do `master` (PREPROD) oraz ręcznie (`workflow_dispatch`).
 
-* **version-check** - sprawdza, czy `PLAYWRIGHT_VERSION` w `.env` jest równe `playwright.version` w `pom.xml`.
-  Przy aktualizacji Playwrighta zmień oba miejsca.
-* **e2e-tests** - testy na chromium, firefox i webkit. Wyniki są widoczne w PR jako check „Wyniki testów - &lt;przeglądarka&gt;”,
+* **e2e-tests** - testy na chromium, firefox i webkit. Wyniki są widoczne w PR do `develop` jako check „Wyniki testów - &lt;przeglądarka&gt;”,
   a raporty (Allure, JUnit, trace) jako artefakty.
 * **allure-pages** - po pushu do `master` publikuje raporty Allure z historią na GitHub Pages (osobny raport dla każdej przeglądarki).
   Wymaga jednorazowego włączenia: Settings → Pages → Source: **GitHub Actions**.
