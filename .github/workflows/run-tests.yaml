@@ -10,14 +10,27 @@ on:
       - synchronize
       - reopened
       - ready_for_review
+  push:
+    branches:
+      - develop
+      - master
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   e2e-tests:
-    name: E2E Tests - ${{ matrix.browser }} (${{ github.base_ref }})
+    name: E2E Tests - ${{ matrix.browser }} (${{ github.base_ref || github.ref_name }})
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      checks: write
 
     strategy:
       fail-fast: false
@@ -27,37 +40,138 @@ jobs:
           - firefox
           - webkit
 
-    container:
-      image: mcr.microsoft.com/playwright/java:v1.49.0-jammy
-
     env:
-      TEST_ENV: ${{ github.base_ref == 'master' && 'preprod' || 'dev' }}
+      TARGET_BRANCH: ${{ github.base_ref || github.ref_name }}
+      TEST_ENV: ${{ (github.base_ref || github.ref_name) == 'master' && 'preprod' || 'dev' }}
       BROWSER: ${{ matrix.browser }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run tests
-        run: |
-          mvn -B clean test \
-            -Denv=${TEST_ENV} \
-            -Dbrowser=${BROWSER}
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
 
-      - name: Upload Allure results
-        if: always()
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ hashFiles('pom.xml') }}
+
+      - name: Install Playwright browser
+        run: |
+          ./mvnw -B -q exec:java -e \
+            -Dexec.mainClass=com.microsoft.playwright.CLI \
+            -Dexec.args="install --with-deps ${BROWSER}"
+
+      - name: Run tests
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: |
+          ./mvnw -B clean test \
+            -Denv="${TEST_ENV}" \
+            -Dbrowser="${BROWSER}"
+
+      - name: Publish test results
+        if: ${{ !cancelled() }}
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Wyniki testów - ${{ matrix.browser }}
+          report_paths: target/cucumber-reports/*.xml
+          detailed_summary: true
+          include_passed: true
+
+      - name: Generate Allure report
+        if: ${{ !cancelled() }}
+        run: ./mvnw -B allure:report
+
+      - name: Upload Allure report
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ github.base_ref }}-${{ matrix.browser }}
+          name: allure-report-${{ env.TARGET_BRANCH }}-${{ matrix.browser }}
+          path: target/site/allure-maven-plugin/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload Allure results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ env.TARGET_BRANCH }}-${{ matrix.browser }}
           path: target/allure-results/
           if-no-files-found: ignore
           retention-days: 14
 
       - name: Upload test reports
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: surefire-reports-${{ github.base_ref }}-${{ matrix.browser }}
-          path: target/surefire-reports/
+          name: test-reports-${{ env.TARGET_BRANCH }}-${{ matrix.browser }}
+          path: |
+            target/surefire-reports/
+            target/cucumber-reports/
+            target/traces/
           if-no-files-found: ignore
           retention-days: 14
+
+  allure-pages:
+    name: Raport Allure (GitHub Pages)
+    needs: e2e-tests
+    if: ${{ !cancelled() && github.event_name == 'push' && github.ref_name == 'master' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-master-*
+          path: results
+
+      - name: Generate Allure reports
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          mkdir -p site
+          echo '<!doctype html><meta charset="utf-8"><title>Raporty Allure</title><h1>Raporty Allure - master</h1><ul>' > site/index.html
+          for dir in results/allure-results-master-*; do
+            browser="${dir#results/allure-results-master-}"
+            mkdir -p "${dir}/history"
+            for file in history.json history-trend.json duration-trend.json categories-trend.json retry-trend.json; do
+              curl -sfL "${BASE_URL}/${browser}/history/${file}" -o "${dir}/history/${file}" || rm -f "${dir}/history/${file}"
+            done
+            npx --yes allure-commandline@2.43.0 generate "${dir}" --clean -o "site/${browser}"
+            echo "<li><a href=\"${browser}/\">${browser}</a></li>" >> site/index.html
+          done
+          echo '</ul>' >> site/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

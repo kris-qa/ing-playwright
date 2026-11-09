@@ -1,6 +1,7 @@
 services:
   playwright-tests:
-    image: mcr.microsoft.com/playwright/java:v1.49.0-jammy
+    # Wersja z pliku .env (zgodna z playwright.version w pom.xml)
+    image: mcr.microsoft.com/playwright/java:v${PLAYWRIGHT_VERSION}-jammy
     working_dir: /app
     init: true
     ipc: host
@@ -14,7 +15,7 @@ services:
       BROWSER: ${BROWSER:-chromium}
 
     command: >
-      bash -c "mvn -B clean test
+      bash -c "./mvnw -B clean test
       -Denv=$${TEST_ENV}
       -Dbrowser=$${BROWSER}"
 

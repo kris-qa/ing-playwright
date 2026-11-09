@@ -1,32 +1,32 @@
 # language: pl
 
 @Cookies
-Funkcja: Logowanie do aplikacji
+Funkcja: Zgody na pliki cookies na stronie głównej
 
-  @GUI @AllCookies
-  Scenariusz: Weryfikacja zaakceptowanych Cookies wszystkich
-    Zakładając, że Użytkownik uruchomi stronę główną
+  Założenia:
+    Zakładając, że użytkownik uruchomi stronę główną
 
-    Kiedy zaakceptuje wszystkie cookies
-    Wtedy zaakceptowano wszystkie cookies
+  @GUI
+  Szablon scenariusza: Weryfikacja zapisanej zgody na cookies - <wybor>
+    Kiedy użytkownik zaakceptuje "<wybor>"
+    Wtedy zapisana zgoda na cookies to "<zgoda>"
 
-  @GUI @Necessary
-  Scenariusz: Weryfikacja zaakceptowanych niezbędnych Cookies
-    Zakładając, że Użytkownik uruchomi stronę główną
+    @AllCookies
+    Przykłady: Wszystkie cookies
+      | wybor     | zgoda |
+      | wszystkie | ALL   |
 
-    Kiedy zaakceptuje niezbędne cookies
-    Wtedy zaakceptowano tylko niezbędne cookies
+    @Necessary
+    Przykłady: Tylko niezbędne cookies
+      | wybor           | zgoda     |
+      | tylko niezbędne | NECESSARY |
 
-  @GUI @Analytics
-  Scenariusz: Weryfikacja zaakceptowanych Cookies analitycznych
-    Zakładając, że Użytkownik uruchomi stronę główną
+    @Analytics
+    Przykłady: Cookies analityczne
+      | wybor               | zgoda     |
+      | Cookies analityczne | ANALYTICS |
 
-    Kiedy zaakceptuje "Cookies analityczne"
-    Wtedy zaakceptowano analityczne cookies
-
-  @GUI @Marketing
-  Scenariusz: Weryfikacja zaakceptowanych Cookies marketingowych
-    Zakładając, że Użytkownik uruchomi stronę główną
-
-    Kiedy zaakceptuje "Cookies marketingowe"
-    Wtedy zaakceptowano marketingowe cookies
+    @Marketing
+    Przykłady: Cookies marketingowe
+      | wybor                | zgoda     |
+      | Cookies marketingowe | MARKETING |
