@@ -1,5 +1,4 @@
 target/
 .idea/
-.mvn/
 .allure
 /src/test/resources/environments/env.local.properties

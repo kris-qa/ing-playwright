@@ -3,16 +3,19 @@
 @Navigation
 Funkcja: Nawigacja na stronie głównej
 
+  Założenia:
+    Zakładając, że użytkownik uruchomi stronę główną
+    I użytkownik zaakceptuje "wszystkie"
+
   @GUI
-  Scenariusz: Menu główne na stronie głównej
-    Zakładając, że Użytkownik uruchomi stronę główną
+  Szablon scenariusza: Przejście do sekcji "<pozycja>" z menu głównego
+    Kiedy użytkownik wybierze w menu głównym "<pozycja>"
+    Wtedy adres strony powinien mieć ścieżkę "<sciezka>"
+    I tytuł strony powinien mieć wartość "<tytul>"
 
-    Kiedy w menu głównym wybierze "Premium"
-    Wtedy Title na stronie powinno mieć wartość "Oferta Premium | ING Bank Śląski"
-
-    Kiedy w menu głównym wybierze "Private Banking"
-    Wtedy Title na stronie powinno mieć wartość "Oferta Private Banking dla klientów ING z aktywami 1 mln"
-
-    Kiedy w menu głównym wybierze "Przedsiębiorcy"
-    Wtedy Title na stronie powinno mieć wartość "Bankowość dla małych firm | ING Bank Śląski"
-
+    # Znak | w tytule zapisujemy jako \| - inaczej Cucumber potraktuje go jako separator kolumn
+    Przykłady:
+      | pozycja         | sciezka          | tytul                                                    |
+      | Premium         | /premium         | Oferta Premium \| ING Bank Śląski                        |
+      | Private Banking | /private-banking | Oferta Private Banking dla klientów ING z aktywami 1 mln |
+      | Przedsiębiorcy  | /male-firmy      | Bankowość dla małych firm \| ING Bank Śląski             |
