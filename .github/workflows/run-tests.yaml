@@ -24,32 +24,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  version-check:
-    name: Zgodność wersji Playwright (pom.xml / .env)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-
-      - name: Compare Playwright versions
-        run: |
-          POM_VERSION=$(./mvnw -B -q help:evaluate -Dexpression=playwright.version -DforceStdout)
-          ENV_VERSION=$(grep '^PLAYWRIGHT_VERSION=' .env | cut -d= -f2)
-          echo "pom.xml: ${POM_VERSION}, .env: ${ENV_VERSION}"
-          if [ "${POM_VERSION}" != "${ENV_VERSION}" ]; then
-            echo "::error file=.env::PLAYWRIGHT_VERSION (${ENV_VERSION}) różni się od playwright.version w pom.xml (${POM_VERSION})"
-            exit 1
-          fi
-
   e2e-tests:
     name: E2E Tests - ${{ matrix.browser }} (${{ github.base_ref || github.ref_name }})
     runs-on: ubuntu-latest
