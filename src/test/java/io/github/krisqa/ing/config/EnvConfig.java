@@ -1,4 +1,4 @@
-package config;
+package io.github.krisqa.ing.config;
 
 import java.io.InputStream;
 import java.io.IOException;

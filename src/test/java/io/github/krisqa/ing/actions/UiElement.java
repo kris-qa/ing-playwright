@@ -1,109 +1,115 @@
-package actions;
+package io.github.krisqa.ing.actions;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.AriaRole;
-import finder.ElementFinder;
+import io.github.krisqa.ing.finder.ElementFinder;
 
 public class UiElement {
     private final Locator locator;
     private final BaseActions actions;
+    private final String description;
 
-    public UiElement(Locator locator, BaseActions actions) {
+    public UiElement(Locator locator, BaseActions actions, String description) {
         this.locator = locator;
         this.actions = actions;
+        this.description = description;
     }
 
     // Actions
 
     public void click() {
-        actions.click(locator);
+        actions.click(this);
     }
 
     public void doubleClick() {
-        actions.doubleClick(locator);
+        actions.doubleClick(this);
     }
 
     public void fill(String value) {
-        actions.fill(locator, value);
+        actions.fill(this, value);
     }
 
     public void type(String value) {
-        actions.type(locator, value);
+        actions.type(this, value);
     }
 
     public void clear() {
-        actions.clear(locator);
+        actions.clear(this);
     }
 
     public void press(String key) {
-        actions.press(locator, key);
+        actions.press(this, key);
     }
 
     public void check() {
-        actions.check(locator);
+        actions.check(this);
     }
 
     public void uncheck() {
-        actions.uncheck(locator);
+        actions.uncheck(this);
     }
 
     public void hover() {
-        actions.hover(locator);
+        actions.hover(this);
     }
 
     public void focus() {
-        actions.focus(locator);
+        actions.focus(this);
     }
 
     public void selectByLabel(String label) {
-        actions.selectByLabel(locator, label);
+        actions.selectByLabel(this, label);
     }
 
     public void selectByValue(String value) {
-        actions.selectByValue(locator, value);
+        actions.selectByValue(this, value);
     }
 
     // Getters
 
     public String getText() {
-        return actions.getText(locator);
+        return actions.getText(this);
     }
 
     public String getValue() {
-        return actions.getValue(locator);
+        return actions.getValue(this);
     }
 
     public boolean isVisible() {
-        return actions.isVisible(locator);
+        return actions.isVisible(this);
     }
 
     public boolean isEnabled() {
-        return actions.isEnabled(locator);
+        return actions.isEnabled(this);
     }
 
     public boolean isChecked() {
-        return actions.isChecked(locator);
+        return actions.isChecked(this);
     }
 
     public void waitFor() {
-        actions.waitFor(locator);
+        actions.waitFor(this);
     }
 
     // Nested element searching
 
     public UiElement findByCss(String selector, Object... args) {
-        return new ElementFinder(locator, actions).byCss(selector, args);
+        return new ElementFinder(locator, actions, description).byCss(selector, args);
     }
 
     public UiElement findByXpath(String xpath, Object... args) {
-        return new ElementFinder(locator, actions).byXpath(xpath, args);
+        return new ElementFinder(locator, actions, description).byXpath(xpath, args);
     }
 
     public UiElement findByRole(AriaRole role, String name) {
-        return new ElementFinder(locator, actions).byRole(role, name);
+        return new ElementFinder(locator, actions, description).byRole(role, name);
     }
 
     public Locator getLocator() {
         return locator;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

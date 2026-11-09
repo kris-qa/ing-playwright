@@ -1,4 +1,4 @@
-package runners;
+package io.github.krisqa.ing.runners;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -14,10 +14,12 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @SelectClasspathResource("features")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
-    value = "pretty,io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
+    value = "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm,"
+        + "io.github.krisqa.ing.logging.StepLogger,"
+        + "junit:target/cucumber-reports/cucumber-junit.xml"
 )@ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "stepDefs,hooks"
+    value = "io.github.krisqa.ing.stepdefs,io.github.krisqa.ing.hooks"
 )
 public class IngRunner {
 }
