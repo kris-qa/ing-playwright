@@ -25,5 +25,6 @@ Pełna analiza i otwarte tematy: `ANALIZA.md` (czytaj tylko gdy potrzebne). Szcz
 - Komentarze w kodzie oszczędnie - tylko gdy wyjaśniają "dlaczego".
 
 ## CI (`.github/workflows/run-tests.yaml`)
-Triggery: PR i push do develop/master, `workflow_dispatch`. Joby: `version-check` (PLAYWRIGHT_VERSION w `.env` == `playwright.version` w `pom.xml` - przy aktualizacji Playwrighta zmienić oba), `e2e-tests` (macierz 3 przeglądarek na ubuntu-latest, przeglądarki instalowane przez `exec:java` CLI, check JUnit w PR), `allure-pages` (push do master → GitHub Pages).
+Triggery: PR do develop (DEV), push do develop (DEV), push do master (PREPROD), `workflow_dispatch`. PR do master celowo nie uruchamia testów. Joby: `e2e-tests` (macierz 3 przeglądarek na ubuntu-latest, przeglądarki instalowane przez `exec:java` CLI, check JUnit w PR), `allure-pages` (push do master → GitHub Pages).
+Przy aktualizacji Playwrighta zmienić ręcznie `PLAYWRIGHT_VERSION` w `.env` i `playwright.version` w `pom.xml` (CI tego nie sprawdza).
 W CI ing.pl może pokazać captchę (IP centrów danych) - nie implementować obchodzenia zabezpieczeń anty-botowych.
